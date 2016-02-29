@@ -76,7 +76,7 @@ Use "--embed\_finetune" option to do this. If you are not providing your own med
 For example "--hidden\_dim\_size \[400,200\]" will give you a two layer GRU where the lower layer uses a 400-dimensional hidden layer 
 and the upper layer uses a 200-dimensional hidden layer.
 
-**STEP 3: Running Med2Vec**  
+**STEP 3: Running Doctor AI**  
 
 1. The minimum input you need to run Doctor AI is the "visit file", the number of unique medical codes in the "visit file", 
 the "label file", the number of unique medical codes in the "label file", and the output path. The output path is where the learned weights will be saved.
