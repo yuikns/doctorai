@@ -7,12 +7,12 @@ Doctor AI is a automatic diagnosis machine that predicts medical codes that occu
 
 Doctor AI implements an algorithm introduced in the following:
 
-	Doctor AI: Predicting Clinical Events via Recurrent Neural Networks
-	Edward Choi, Mohammad Taha Bahadori, Andy Schuetz, Walter F. Stewart, Joshua C. Denny, Bradley A. Malin, Jimeng Sun
+	Doctor AI: Predicting Clinical Events via Recurrent Neural Networks  
+	Edward Choi, Mohammad Taha Bahadori, Andy Schuetz, Walter F. Stewart, Joshua C. Denny, Bradley A. Malin, Jimeng Sun  
 	arXiv preprint arXiv:1511.05942
 	
-	Medical Concept Representation Learning from Electronic Health Records and its Application on Heart Failure Prediction
-	Edward Choi, Andy Schuetz, Walter F. Stewart, Jimeng Sun
+	Medical Concept Representation Learning from Electronic Health Records and its Application on Heart Failure Prediction  
+	Edward Choi, Andy Schuetz, Walter F. Stewart, Jimeng Sun  
 	arXiv preprint arXiv:1602.03686
 
 ####Running Doctor AI
@@ -29,9 +29,9 @@ Doctor AI implements an algorithm introduced in the following:
 
 1. Doctor AI's training dataset needs to be a Python Pickled list of list of list. Each list corresponds to patients, visits, and medical codes (e.g. diagnosis codes, medication codes, procedure codes, etc.)
 First, medical codes need to be converted to an integer. Then a single visit can be seen as a list of integers. Then a patient can be seen as a list of visits.
-For example, [5,8,15] means the patient was assigned with code 5, 8, and 15 at a certain visit. 
-If a patient made two visits [1,2,3] and [4,5,6,7], it can be converted to a list of list [[1,2,3], [4,5,6,7]]. 
-Multiple patients can be represented as [[[1,2,3], [4,5,6,7]], [[2,4], [8,3,1], [3]]], which means there are two patients where the first patient made two visits and the second patient made three visits. 
+For example, [5,8,15] means the patient was assigned with code 5, 8, and 15 at a certain visit.
+If a patient made two visits [1,2,3] and [4,5,6,7], it can be converted to a list of list [[1,2,3], [4,5,6,7]].
+Multiple patients can be represented as [[[1,2,3], [4,5,6,7]], [[2,4], [8,3,1], [3]]], which means there are two patients where the first patient made two visits and the second patient made three visits.
 This list of list of list needs to be pickled using cPickle. We will refer to this file as the "visit file".
 
 2. The total number of unique medical codes is required to run Doctor AI.
@@ -79,7 +79,7 @@ and the upper layer uses a 200-dimensional hidden layer.
 **STEP 3: Running Doctor AI**  
 
 1. The minimum input you need to run Doctor AI is the "visit file", the number of unique medical codes in the "visit file", 
-the "label file", the number of unique medical codes in the "label file", and the output path. The output path is where the learned weights will be saved.
+the "label file", the number of unique medical codes in the "label file", and the output path. The output path is where the learned weights will be saved.  
 `python doctorAI.py <visit file> <# codes in the visit file> <label file> <# codes in the label file> <output path>`  
 
 2. Specifying `--verbose` option will print training process after each 10 mini-batches.
@@ -100,5 +100,5 @@ Doctor AI checks the validation cross entropy after each epoch, and if it is low
 
 4. To evaluate the time prediction performance, we provide R^2 error. In order to calculate this, you need to provide the mean value of all durations in the "time file" you used to train Doctor AI. (You must ignore the 0 duration of the first visits or course) Use "--mean\_duration" option to do this.
 
-5. The minimum input to run the testing script is the "model file", "visit file", "label file", and "hidden dim size".
+5. The minimum input to run the testing script is the "model file", "visit file", "label file", and "hidden dim size".  
 `python testDoctorAI.py <model file> <visit file> <label file> <hidden_dim_size>`
