@@ -65,11 +65,13 @@ Use "--predict\_time" option to do this. And obviously, predicting time requires
 Time prediction also comes with many hyperparameters such as "--tradeoff", "--L2\_time", "--use\_log\_time". 
 Refer to "--help" for more detailed information
 
-7. Doctor AI internally learns vector representation of medical codes while training. You can also provide medical code representations, if you have one. 
-They can be easily trained by using Skip-gram like algorithms.
-If you want to provide the medical code representations, it has be a matrix of N rows and M columns where N is the number of unique codes in you "visit file" and M is an arbitray size. 
-For more details regarding the training of medical code representations and using them for predictive tasks, please refer to the second paper of the "Related Publication" section.
-Even if you provided your own medical code representations, you can re-train (aka fine-tune) them as you train Doctor AI. 
+7. Doctor AI internally learns vector representation of medical codes while training.
+You can also provide medical code representations, if you have one. 
+(They can be easily trained by using Skip-gram like algorithms.)
+If you want to provide the medical code representations, it has to be a list of list (basically a matrix) of N rows and M columns where N is the number of unique codes in your "visit file" and M is the size of the code representations.
+Specify the path to your code representation file using "--embed\_file".  
+For more details regarding the training of medical code representations and using them for predictive tasks, please refer to the second paper of the "Related Publication" section.  
+Additionally even if you provided your own medical code representations, you can re-train (aka fine-tune) them as you train Doctor AI. 
 Use "--embed\_finetune" option to do this. If you are not providing your own medical code representations, Doctor AI will use randomly initialized one, which obviously requires this fine-tuning process. Since the default is to use the fine-tuning, you do not need to worry about this.
 
 8. You can specify how many GRU layers you want to use by using "--hidden\_dim\_size" option.
