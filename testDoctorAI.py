@@ -1,3 +1,8 @@
+#################################################################
+# Code written by Edward Choi (mp2893@gatech.edu)
+# For bug report, please contact author using the email address
+#################################################################
+
 import sys
 import numpy as np
 import cPickle as pickle
@@ -254,10 +259,10 @@ def parse_arguments(parser):
 	parser.add_argument('model_file', type=str, metavar='<model_file>', help='The path to the model file saved by Doctor AI')
 	parser.add_argument('seq_file', type=str, metavar='<visit_file>', help='The path to the Pickled file containing visit information of patients')
 	parser.add_argument('label_file', type=str, metavar='<label_file>', help='The path to the Pickled file containing label information of patients')
+	parser.add_argument('hidden_dim_size', type=str, metavar='<hidden_dim_size>', help='The size of the hidden layers of the Doctor AI. This is a string argument. For example, [500,400] means you are using a two-layer GRU where the lower layer uses a 500-dimensional hidden layer, and the upper layer uses a 400-dimensional hidden layer. (default value: [200,200])')
 	parser.add_argument('--time_file', type=str, default='', help='The path to the Pickled file containing durations between visits of patients. If you are not using duration information, do not use this option')
 	parser.add_argument('--predict_time', type=int, default=0, choices=[0,1], help='Use this option if you want Doctor AI to also predict the time duration until the next visit (0 for false, 1 for true) (default value: 0)')
 	parser.add_argument('--use_log_time', type=int, default=1, choices=[0,1], help='Use logarithm of time duration to dampen the impact of the outliers (0 for false, 1 for true) (default value: 1)')
-	parser.add_argument('--hidden_dim_size', type=str, default='[200,200]', help='The size of the hidden layers of the Doctor AI. This is a string argument. For example, [500,400] means you are using a two-layer GRU where the lower layer uses a 500-dimensional hidden layer, and the upper layer uses a 400-dimensional hidden layer. (default value: [200,200])')
 	parser.add_argument('--batch_size', type=int, default=100, help='The size of a single mini-batch (default value: 100)')
 	parser.add_argument('--mean_duration', type=float, default=20.0, help='The mean value of the durations between visits of the training data. This will be used to calculate the R^2 error (default value: 20.0)')
 	parser.add_argument('--verbose', action='store_true', help='Print output after every 10 mini-batches (default false)')
