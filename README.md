@@ -65,11 +65,11 @@ Refer to "--help" for more detailed information
 They can be easily trained by using Skip-gram like algorithms.
 If you want to provide the medical code representations, it has be a matrix of N rows and M columns where N is the number of unique codes in you "visit file" and M is an arbitray size. 
 For more details regarding the training of medical code representations and using them for predictive tasks, refer the following:
-
-	Medical Concept Representation Learning from Electronic Health Records and its Application on Heart Failure Prediction
-	Edward Choi, Andy Schuetz, Walter F. Stewart, Jimeng Sun
-	arXiv preprint arXiv:1602.03686
-
+---------------------------------------------------------------------------------------------------------------------------------
+Medical Concept Representation Learning from Electronic Health Records and its Application on Heart Failure Prediction
+Edward Choi, Andy Schuetz, Walter F. Stewart, Jimeng Sun
+arXiv preprint arXiv:1602.03686
+---------------------------------------------------------------------------------------------------------------------------------
 Even if you provided your own medical code representations, you can re-train (aka fine-tune) them as you train Doctor AI. 
 Use "--embed\_finetune" option to do this. If you are not providing your own medical code representations, Doctor AI will use randomly initialized one, which obviously requires this fine-tuning process. Since the default is to use the fine-tuning, you do not need to worry about this.
 
