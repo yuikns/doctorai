@@ -10,6 +10,10 @@ Doctor AI implements an algorithm introduced in the following:
 	Doctor AI: Predicting Clinical Events via Recurrent Neural Networks
 	Edward Choi, Mohammad Taha Bahadori, Andy Schuetz, Walter F. Stewart, Joshua C. Denny, Bradley A. Malin, Jimeng Sun
 	arXiv preprint arXiv:1511.05942
+	
+	Medical Concept Representation Learning from Electronic Health Records and its Application on Heart Failure Prediction
+	Edward Choi, Andy Schuetz, Walter F. Stewart, Jimeng Sun
+	arXiv preprint arXiv:1602.03686
 
 ####Running Doctor AI
 
@@ -64,12 +68,7 @@ Refer to "--help" for more detailed information
 7. Doctor AI internally learns vector representation of medical codes while training. You can also provide medical code representations, if you have one. 
 They can be easily trained by using Skip-gram like algorithms.
 If you want to provide the medical code representations, it has be a matrix of N rows and M columns where N is the number of unique codes in you "visit file" and M is an arbitray size. 
-For more details regarding the training of medical code representations and using them for predictive tasks, refer the following:
-
-Medical Concept Representation Learning from Electronic Health Records and its Application on Heart Failure Prediction
-Edward Choi, Andy Schuetz, Walter F. Stewart, Jimeng Sun
-arXiv preprint arXiv:1602.03686
-
+For more details regarding the training of medical code representations and using them for predictive tasks, please refer to the second paper of the "Related Publication" section.
 Even if you provided your own medical code representations, you can re-train (aka fine-tune) them as you train Doctor AI. 
 Use "--embed\_finetune" option to do this. If you are not providing your own medical code representations, Doctor AI will use randomly initialized one, which obviously requires this fine-tuning process. Since the default is to use the fine-tuning, you do not need to worry about this.
 
@@ -81,11 +80,11 @@ and the upper layer uses a 200-dimensional hidden layer.
 
 1. The minimum input you need to run Doctor AI is the "visit file", the number of unique medical codes in the "visit file", 
 the "label file", the number of unique medical codes in the "label file", and the output path. The output path is where the learned weights will be saved.
-`python med2vec <path/to/visit_file> <the number of unique medical codes> <path/to/output>`  
+`python doctorAI.py <visit file> <# codes in the visit file> <label file> <# codes in the label file> <output path>`  
 
 2. Specifying `--verbose` option will print training process after each 10 mini-batches.
 
-3. Additional options can be specified such as the size of the medical code representation, batch size, the number of epochs, etc. Detailed information can be accessed by `python med2vec --help`
+3. Additional options can be specified such as the size of the medical code representation, batch size, the number of epochs, etc. Detailed information can be accessed by `python doctorAI.py --help`
 
 **STEP 4: Getting your results**  
 
@@ -100,3 +99,6 @@ Doctor AI checks the validation cross entropy after each epoch, and if it is low
 3. Using additional options such as "--hidden\_dim\_size" and "--use\_log\_time", you should use exactly the same configuration with which you trained the model. For more detailed information, use "--help" option.
 
 4. To evaluate the time prediction performance, we provide R^2 error. In order to calculate this, you need to provide the mean value of all durations in the "time file" you used to train Doctor AI. (You must ignore the 0 duration of the first visits or course) Use "--mean\_duration" option to do this.
+
+5. The minimum input to run the testing script is the "model file", "visit file", "label file", and "hidden dim size".
+`python testDoctorAI.py <model file> <visit file> <label file> <hidden_dim_size>`
