@@ -60,13 +60,13 @@ Of course, the numbers are fake, but the important thing is that the duration fo
 Use "--time\_file" option to use "time file"
 Remember that the ".train", ".valid", ".test" rule also applies to the "time file" as well.
 
-**Additional: Predicting time duration until next visit**
+**Additional: Predicting time duration until next visit**  
 In addtion to predicting the codes of the next visit, you can make Doctor AI predict the time duration until next visit. 
 Use "--predict\_time" option to do this. And obviously, predicting time requires the "time file".  
 Time prediction also comes with many hyperparameters such as "--tradeoff", "--L2\_time", "--use\_log\_time". 
 Refer to "--help" for more detailed information
 
-**Additional: Using your own medical code representations**
+**Additional: Using your own medical code representations**  
 Doctor AI internally learns vector representation of medical codes while training. These vectors are initialized with random values of course.  
 You can, however, also provide medical code representations, if you have one. (They can be easily trained by using Skip-gram like algorithms.)
 If you want to provide the medical code representations, it has to be a list of list (basically a matrix) of N rows and M columns where N is the number of unique codes in your "visit file" and M is the size of the code representations.
