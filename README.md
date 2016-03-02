@@ -49,11 +49,11 @@ which can cause not only low predictive performance but also memory issues. (The
 If you are using "visit file" as the "label file", than the number of unique codes will be the same, of course.
 
 5. The "visit file" and "label file" need to have 3 sets respectively: training set, validation set, and test set.
-The file extension must be ".train", ".valid", and ".test" respectivley. 
-For example, if you give "visit\_sequences" as the "visit file", then Doctor AI will try to load "visit\_sequences.train", "visit\_sequences.valid", and "visit\_sequences.test".
+The file extension must be ".train", ".valid", and ".test" respectivley.  
+For example, if you want to use a file named "my_visit_sequences" as the "visit file", then Doctor AI will try to load "my_visit_sequences.train", "my_visit_sequences.valid", and "my_visit_sequences.test".  
 This is also true for the "label file"
 
-5. You can use the time duration between visits as addition source of information. Let us call this "time file".
+5. You can use the time duration between visits as an additional source of information. Let us call this "time file".
 "time file" needs to be prepared as a Python Pickled List of List. Each list corresponds to patients and the duration between each visit.
 For example, given a "visit file" [[[1,2,3], [4,5,6,7]], [[2,4], [8,3,1], [3]]], its corresponding "time file" should look like [[0, 15], [0, 45, 23]].
 Of course, the numbers are fake, but the important thing is that the duration for the first visit needs to be zero. 
