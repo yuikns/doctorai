@@ -38,6 +38,7 @@ def init_params(options):
 	if len(embFile) > 0: 
 		print 'using external code embedding'
 		params['W_emb'] = load_embedding(embFile)
+		embSize = params['W_emb'].shape[1]
 	else: 
 		print 'using randomly initialized code embedding'
 		params['W_emb'] = np.random.uniform(-0.01, 0.01, (inputDimSize, embSize)).astype(config.floatX)
@@ -449,7 +450,6 @@ def train_doctorAI(
 			f_update()
 			if (iteration % 10 == 0) and verbose: print 'epoch:%d, iteration:%d/%d, cost:%f' % (epoch, iteration, n_batches, cost)
 			iteration += 1
-			if iteration == 10: break
 
 		print 'epoch:%d, mean_cost:%f' % (epoch, np.mean(costVector))
 		use_noise.set_value(0.)
@@ -477,7 +477,7 @@ def parse_arguments(parser):
 	parser.add_argument('--tradeoff', type=float, default=1.0, help='Tradeoff variable for balancing the two loss functions: code prediction function and duration prediction function (default value: 1.0)')
 	parser.add_argument('--use_log_time', type=int, default=1, choices=[0,1], help='Use logarithm of time duration to dampen the impact of the outliers (0 for false, 1 for true) (default value: 1)')
 	parser.add_argument('--embed_file', type=str, default='', help='The path to the Pickled file containing the representation vectors of medical codes. If you are not using medical code representations, do not use this option')
-	parser.add_argument('--embed_size', type=int, default=200, help='The size of the visit embedding before passing it to the GRU layers (default value: 200)')
+	parser.add_argument('--embed_size', type=int, default=200, help='The size of the visit embedding before passing it to the GRU layers. If you are not providing your own medical code vectors, you must specify this value (default value: 200)')
 	parser.add_argument('--embed_finetune', type=int, default=1, choices=[0,1], help='If you are using randomly initialized code representations, always use this option. If you are using an external medical code representations, and you want to fine-tune them as you train the GRU, use this option as well. (0 for false, 1 for true) (default value: 1)')
 	parser.add_argument('--hidden_dim_size', type=str, default='[200,200]', help='The size of the hidden layers of the GRU. This is a string argument. For example, [500,400] means you are using a two-layer GRU where the lower layer uses a 500-dimensional hidden layer, and the upper layer uses a 400-dimensional hidden layer. (default value: [200,200])')
 	parser.add_argument('--batch_size', type=int, default=100, help='The size of a single mini-batch (default value: 100)')
