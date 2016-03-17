@@ -49,32 +49,31 @@ which can cause not only low predictive performance but also memory issues. (The
 If you are using "visit file" as the "label file", than the number of unique codes will be the same, of course.
 
 5. The "visit file" and "label file" need to have 3 sets respectively: training set, validation set, and test set.
-The file extension must be ".train", ".valid", and ".test" respectivley. 
-For example, if you give "visit\_sequences" as the "visit file", then Doctor AI will try to load "visit\_sequences.train", "visit\_sequences.valid", and "visit\_sequences.test".
+The file extension must be ".train", ".valid", and ".test" respectivley.  
+For example, if you want to use a file named "my_visit_sequences" as the "visit file", then Doctor AI will try to load "my_visit_sequences.train", "my_visit_sequences.valid", and "my_visit_sequences.test".  
 This is also true for the "label file"
 
-5. You can use the time duration between visits as addition source of information. Let us call this "time file".
+5. You can use the time duration between visits as an additional source of information. Let us call this "time file".
 "time file" needs to be prepared as a Python Pickled List of List. Each list corresponds to patients and the duration between each visit.
 For example, given a "visit file" [[[1,2,3], [4,5,6,7]], [[2,4], [8,3,1], [3]]], its corresponding "time file" should look like [[0, 15], [0, 45, 23]].
 Of course, the numbers are fake, but the important thing is that the duration for the first visit needs to be zero. 
 Use "--time\_file" option to use "time file"
 Remember that the ".train", ".valid", ".test" rule also applies to the "time file" as well.
 
-6. In addtion to predicting the codes of the next visit, you can make Doctor AI predict the time duration until next visit. 
+**Additional: Predicting time duration until next visit**  
+In addtion to predicting the codes of the next visit, you can make Doctor AI predict the time duration until next visit. 
 Use "--predict\_time" option to do this. And obviously, predicting time requires the "time file".  
 Time prediction also comes with many hyperparameters such as "--tradeoff", "--L2\_time", "--use\_log\_time". 
 Refer to "--help" for more detailed information
 
-7. Doctor AI internally learns vector representation of medical codes while training. You can also provide medical code representations, if you have one. 
-They can be easily trained by using Skip-gram like algorithms.
-If you want to provide the medical code representations, it has be a matrix of N rows and M columns where N is the number of unique codes in you "visit file" and M is an arbitray size. 
-For more details regarding the training of medical code representations and using them for predictive tasks, please refer to the second paper of the "Related Publication" section.
-Even if you provided your own medical code representations, you can re-train (aka fine-tune) them as you train Doctor AI. 
+**Additional: Using your own medical code representations**  
+Doctor AI internally learns vector representation of medical codes while training. These vectors are initialized with random values of course.  
+You can, however, also provide medical code representations, if you have one. (They can be easily trained by using Skip-gram like algorithms.)
+If you want to provide the medical code representations, it has to be a list of list (basically a matrix) of N rows and M columns where N is the number of unique codes in your "visit file" and M is the size of the code representations.
+Specify the path to your code representation file using "--embed\_file".  
+For more details regarding the training of medical code representations and using them for predictive tasks, please refer to the second paper of the "Related Publication" section.  
+Additionally even if you provided your own medical code representations, you can re-train (a.k.a fine-tune) them as you train Doctor AI. 
 Use "--embed\_finetune" option to do this. If you are not providing your own medical code representations, Doctor AI will use randomly initialized one, which obviously requires this fine-tuning process. Since the default is to use the fine-tuning, you do not need to worry about this.
-
-8. You can specify how many GRU layers you want to use by using "--hidden\_dim\_size" option.
-For example "--hidden\_dim\_size \[400,200\]" will give you a two layer GRU where the lower layer uses a 400-dimensional hidden layer 
-and the upper layer uses a 200-dimensional hidden layer.
 
 **STEP 3: Running Doctor AI**  
 
@@ -84,7 +83,11 @@ the "label file", the number of unique medical codes in the "label file", and th
 
 2. Specifying `--verbose` option will print training process after each 10 mini-batches.
 
-3. Additional options can be specified such as the size of the medical code representation, batch size, the number of epochs, etc. Detailed information can be accessed by `python doctorAI.py --help`
+3. You can specify how many GRU layers you want to use by using "--hidden\_dim\_size" option.
+For example "--hidden\_dim\_size \[400,200\]" will give you a two layer GRU where the lower layer uses a 400-dimensional hidden layer 
+and the upper layer uses a 200-dimensional hidden layer.
+
+4. Additional options can be specified such as the size of the embedding layer, batch size, the number of epochs, dropout rate, etc. Detailed information can be accessed by `python doctorAI.py --help`
 
 **STEP 4: Getting your results**  
 
