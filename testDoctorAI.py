@@ -101,9 +101,9 @@ def build_model(tparams, options):
 		duration = duration.reshape([n_timesteps,n_samples]) * mask
 		return x, t, mask, results, duration
 	elif options['useTime']:
-		return x, t, mask, results, duration
+		return x, t, mask, results
 	else:
-		return x, mask, results, duration
+		return x, mask, results
 
 def load_data(dataFile, labelFile, timeFile):
 	test_set_x = np.array(pickle.load(open(dataFile, 'rb')))
@@ -171,7 +171,7 @@ def test_doctorAI(
 	inputDimSize=20000,
 	labelFile='label.txt',
 	numClass=500,
-	timeFile='time.txt',
+	timeFile='',
 	predictTime=False,
 	useLogTime=True,
 	hiddenDimSize=[200,200],
@@ -195,10 +195,10 @@ def test_doctorAI(
 		predict_code = theano.function(inputs=[x,t,mask], outputs=codePred, name='predict_code')
 		predict_time = theano.function(inputs=[x,t,mask], outputs=timePred, name='predict_time')
 	elif useTime:
-		x, t, mask, codePred, timePred = build_model(tparams, options)
+		x, t, mask, codePred = build_model(tparams, options)
 		predict_code = theano.function(inputs=[x,t,mask], outputs=codePred, name='predict_code')
 	else:
-		x, mask, codePred, timePred = build_model(tparams, options)
+		x, mask, codePred = build_model(tparams, options)
 		predict_code = theano.function(inputs=[x,mask], outputs=codePred, name='predict_code')
 
 	options['inputDimSize']=models['W_emb'].shape[0]
@@ -226,7 +226,7 @@ def test_doctorAI(
 			codeResults = predict_code(x, t, mask)
 		else:
 			x, mask, lengths = padMatrixWithoutTime(tempX, options)
-			codeResults = predict_code(x, t, mask)
+			codeResults = predict_code(x, mask)
 
 		for i in range(batchSize):
 			tensorMatrix = codeResults[:,i,:]
