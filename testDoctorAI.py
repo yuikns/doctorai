@@ -141,7 +141,6 @@ def padMatrixWithTime(seqs, times, options):
 		mask[:lengths[idx], idx] = 1.
 		t[:lengths[idx], idx] = time[:-1]
 	
-	lengths = np.asarray(lengths, dtype=config.floatX)
 	if options['useLogTime']:
 		t = np.log(t + options['logEps'])
 
@@ -161,8 +160,6 @@ def padMatrixWithoutTime(seqs, options):
 			xvec[subseq] = 1.
 		mask[:lengths[idx], idx] = 1.
 	
-	lengths = np.asarray(lengths, dtype=config.floatX)
-
 	return x, mask, lengths
 
 def test_doctorAI(
@@ -206,6 +203,7 @@ def test_doctorAI(
 	print 'load data ... ', 
 	testSet = load_data(seqFile, labelFile, timeFile)
 	n_batches = int(np.ceil(float(len(testSet[0])) / float(batchSize)))
+	print 'done'
 
 	predVec = []
 	trueVec = []
@@ -228,7 +226,7 @@ def test_doctorAI(
 			x, mask, lengths = padMatrixWithoutTime(tempX, options)
 			codeResults = predict_code(x, mask)
 
-		for i in range(batchSize):
+		for i in range(codeResults.shape[1]):
 			tensorMatrix = codeResults[:,i,:]
 			thisY = tempY[i][1:]
 			for timeIndex in range(lengths[i]):
@@ -238,7 +236,7 @@ def test_doctorAI(
 				predVec.append(zip(*heapq.nlargest(30, enumerate(output), key=operator.itemgetter(1)))[0])
 
 		if predictTime:
-			for i in range(batchSize):
+			for i in range(timeResults.shape[1]):
 				timeVec = timeResults[:,i]
 				trueTimeVec.extend(tempT[i][1:])
 				for timeIndex in range(lengths[i]):
