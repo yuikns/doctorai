@@ -8,7 +8,7 @@ Doctor AI is a automatic diagnosis machine that predicts medical codes that occu
 Doctor AI implements an algorithm introduced in the following:
 
 	Doctor AI: Predicting Clinical Events via Recurrent Neural Networks  
-	Edward Choi, Mohammad Taha Bahadori, Andy Schuetz, Walter F. Stewart, Joshua C. Denny, Bradley A. Malin, Jimeng Sun  
+	Edward Choi, Mohammad Taha Bahadori, Andy Schuetz, Walter F. Stewart, Jimeng Sun  
 	arXiv preprint arXiv:1511.05942
 	
 	Medical Concept Representation Learning from Electronic Health Records and its Application on Heart Failure Prediction  
