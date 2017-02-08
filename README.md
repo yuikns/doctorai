@@ -27,6 +27,8 @@ Doctor AI implements an algorithm introduced in the following:
 
 **STEP 2: Preparing training data**  
 
+0. You can use "process_mimic.py" to process MIMIC-III dataset and generate a suitable training dataset for Doctor AI. Place the script to the same location where the MIMIC-III CSV files are located, and run the script. Instructions are described inside the script. However, I recommend the readers to read the following steps to understand the structure of the training data and learn how to prepare their own dataset.
+
 1. Doctor AI's training dataset needs to be a Python Pickled list of list of list. Each list corresponds to patients, visits, and medical codes (e.g. diagnosis codes, medication codes, procedure codes, etc.)
 First, medical codes need to be converted to an integer. Then a single visit can be seen as a list of integers. Then a patient can be seen as a list of visits.
 For example, [5,8,15] means the patient was assigned with code 5, 8, and 15 at a certain visit.
