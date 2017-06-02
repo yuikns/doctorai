@@ -5,7 +5,7 @@
 
 import sys, random
 import numpy as np
-import cPickle as pickle
+import pickle as pickle
 from collections import OrderedDict
 import argparse
 
@@ -16,7 +16,7 @@ from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 
 def unzip(zipped):
 	new_params = OrderedDict()
-	for key, value in zipped.iteritems():
+	for key, value in zipped.items():
 		new_params[key] = value.get_value()
 	return new_params
 
@@ -36,11 +36,11 @@ def init_params(options):
 	numClass = options['numClass']
 
 	if len(embFile) > 0: 
-		print 'using external code embedding'
+		print('using external code embedding')
 		params['W_emb'] = load_embedding(embFile)
 		embSize = params['W_emb'].shape[1]
 	else: 
-		print 'using randomly initialized code embedding'
+		print('using randomly initialized code embedding')
 		params['W_emb'] = np.random.uniform(-0.01, 0.01, (inputDimSize, embSize)).astype(config.floatX)
 	params['b_emb'] = np.zeros(embSize).astype(config.floatX)
 
@@ -69,7 +69,7 @@ def init_params(options):
 
 def init_tparams(params, options):
 	tparams = OrderedDict()
-	for key, value in params.iteritems():
+	for key, value in params.items():
 		if not options['embFineTune'] and key == 'W_emb': continue
 		tparams[key] = theano.shared(value, name=key)
 	return tparams
@@ -148,9 +148,9 @@ def build_model(tparams, options, W_emb=None):
 	else: return use_noise, x, y, mask, lengths, cost
 
 def adadelta(tparams, grads, x, y, mask, lengths, cost, options, t=None, t_label=None):
-	zipped_grads = [theano.shared(p.get_value() * numpy_floatX(0.), name='%s_grad' % k) for k, p in tparams.iteritems()]
-	running_up2 = [theano.shared(p.get_value() * numpy_floatX(0.), name='%s_rup2' % k) for k, p in tparams.iteritems()]
-	running_grads2 = [theano.shared(p.get_value() * numpy_floatX(0.), name='%s_rgrad2' % k) for k, p in tparams.iteritems()]
+	zipped_grads = [theano.shared(p.get_value() * numpy_floatX(0.), name='%s_grad' % k) for k, p in tparams.items()]
+	running_up2 = [theano.shared(p.get_value() * numpy_floatX(0.), name='%s_rup2' % k) for k, p in tparams.items()]
+	running_grads2 = [theano.shared(p.get_value() * numpy_floatX(0.), name='%s_rgrad2' % k) for k, p in tparams.items()]
 
 	zgup = [(zg, g) for zg, g in zip(zipped_grads, grads)]
 	rg2up = [(rg2, 0.95 * rg2 + 0.05 * (g ** 2)) for rg2, g in zip(running_grads2, grads)]
@@ -164,7 +164,7 @@ def adadelta(tparams, grads, x, y, mask, lengths, cost, options, t=None, t_label
 
 	updir = [-T.sqrt(ru2 + 1e-6) / T.sqrt(rg2 + 1e-6) * zg for zg, ru2, rg2 in zip(zipped_grads, running_up2, running_grads2)]
 	ru2up = [(ru2, 0.95 * ru2 + 0.05 * (ud ** 2)) for ru2, ud in zip(running_up2, updir)]
-	param_up = [(p, p + ud) for p, ud in zip(tparams.values(), updir)]
+	param_up = [(p, p + ud) for p, ud in zip(list(tparams.values()), updir)]
 
 	f_update = theano.function([], [], updates=ru2up + param_up, on_unused_input='ignore', name='adadelta_f_update')
 
@@ -293,7 +293,7 @@ def load_data(seqFile, labelFile, timeFile):
 	'''
 
 	def len_argsort(seq):
-		return sorted(range(len(seq)), key=lambda x: len(seq[x]))
+		return sorted(list(range(len(seq))), key=lambda x: len(seq[x]))
 
 	train_sorted_index = len_argsort(train_set_x)
 	train_set_x = [train_set_x[i] for i in train_sorted_index]
@@ -328,7 +328,7 @@ def calculate_auc(test_model, dataset, options):
 	n_batches = int(np.ceil(float(len(dataset[0])) / float(batchSize)))
 	aucSum = 0.0
 	dataCount = 0.0
-	for index in xrange(n_batches):
+	for index in range(n_batches):
 		batchX = dataset[0][index*batchSize:(index+1)*batchSize]
 		batchY = dataset[1][index*batchSize:(index+1)*batchSize]
 		if predictTime:
@@ -374,51 +374,51 @@ def train_doctorAI(
 	else: useTime = False
 	options['useTime'] = useTime
 	
-	print 'Initializing the parameters ... ',
+	print('Initializing the parameters ... ', end=' ')
 	params = init_params(options)
 	tparams = init_tparams(params, options)
 
-	print 'Building the model ... ',
+	print('Building the model ... ', end=' ')
 	f_grad_shared = None
 	f_update = None
 	if predictTime and embFineTune:
-		print 'predicting duration, fine-tuning code representations'
+		print('predicting duration, fine-tuning code representations')
 		use_noise, x, y, t, t_label, mask, lengths, cost =  build_model(tparams, options)
-		grads = T.grad(cost, wrt=tparams.values())
+		grads = T.grad(cost, wrt=list(tparams.values()))
 		f_grad_shared, f_update = adadelta(tparams, grads, x, y, mask, lengths, cost, options, t, t_label)
 	elif predictTime and not embFineTune:
-		print 'predicting duration, not fine-tuning code representations'
+		print('predicting duration, not fine-tuning code representations')
 		W_emb = theano.shared(params['W_emb'], name='W_emb')
 		use_noise, x, y, t, t_label, mask, lengths, cost =  build_model(tparams, options, W_emb)
-		grads = T.grad(cost, wrt=tparams.values())
+		grads = T.grad(cost, wrt=list(tparams.values()))
 		f_grad_shared, f_update = adadelta(tparams, grads, x, y, mask, lengths, cost, options, t, t_label)
 	elif useTime and embFineTune:
-		print 'using duration information, fine-tuning code representations'
+		print('using duration information, fine-tuning code representations')
 		use_noise, x, y, t, mask, lengths, cost =  build_model(tparams, options)
-		grads = T.grad(cost, wrt=tparams.values())
+		grads = T.grad(cost, wrt=list(tparams.values()))
 		f_grad_shared, f_update = adadelta(tparams, grads, x, y, mask, lengths, cost, options, t)
 	elif useTime and not embFineTune:
-		print 'using duration information, not fine-tuning code representations'
+		print('using duration information, not fine-tuning code representations')
 		W_emb = theano.shared(params['W_emb'], name='W_emb')
 		use_noise, x, y, t, mask, lengths, cost =  build_model(tparams, options, W_emb)
-		grads = T.grad(cost, wrt=tparams.values())
+		grads = T.grad(cost, wrt=list(tparams.values()))
 		f_grad_shared, f_update = adadelta(tparams, grads, x, y, mask, lengths, cost, options, t)
 	elif not useTime and embFineTune:
-		print 'not using duration information, fine-tuning code representations'
+		print('not using duration information, fine-tuning code representations')
 		use_noise, x, y, mask, lengths, cost =  build_model(tparams, options)
-		grads = T.grad(cost, wrt=tparams.values())
+		grads = T.grad(cost, wrt=list(tparams.values()))
 		f_grad_shared, f_update = adadelta(tparams, grads, x, y, mask, lengths, cost, options)
 	elif useTime and not embFineTune:
-		print 'not using duration information, not fine-tuning code representations'
+		print('not using duration information, not fine-tuning code representations')
 		W_emb = theano.shared(params['W_emb'], name='W_emb')
 		use_noise, x, y, mask, lengths, cost =  build_model(tparams, options, W_emb)
-		grads = T.grad(cost, wrt=tparams.values())
+		grads = T.grad(cost, wrt=list(tparams.values()))
 		f_grad_shared, f_update = adadelta(tparams, grads, x, y, mask, lengths, cost, options)
 
-	print 'Loading data ... ',
+	print('Loading data ... ', end=' ')
 	trainSet, validSet, testSet = load_data(seqFile, labelFile, timeFile)
 	n_batches = int(np.ceil(float(len(trainSet[0])) / float(batchSize)))
-	print 'done'
+	print('done')
 
 	if predictTime: test_model = theano.function(inputs=[x, y, t, t_label, mask, lengths], outputs=cost, name='test_model')
 	elif useTime: test_model = theano.function(inputs=[x, y, t, mask, lengths], outputs=cost, name='test_model')
@@ -427,11 +427,11 @@ def train_doctorAI(
 	bestValidCrossEntropy = 1e20
 	bestValidEpoch = 0
 	testCrossEntropy = 0.0
-	print 'Optimization start !!'
-	for epoch in xrange(max_epochs):
+	print('Optimization start !!')
+	for epoch in range(max_epochs):
 		iteration = 0
 		costVector = []
-		for index in random.sample(range(n_batches), n_batches):
+		for index in random.sample(list(range(n_batches)), n_batches):
 			use_noise.set_value(1.)
 			batchX = trainSet[0][index*batchSize:(index+1)*batchSize]
 			batchY = trainSet[1][index*batchSize:(index+1)*batchSize]
@@ -448,23 +448,23 @@ def train_doctorAI(
 				cost = f_grad_shared(x, y, mask, lengths)
 			costVector.append(cost)
 			f_update()
-			if (iteration % 10 == 0) and verbose: print 'epoch:%d, iteration:%d/%d, cost:%f' % (epoch, iteration, n_batches, cost)
+			if (iteration % 10 == 0) and verbose: print('epoch:%d, iteration:%d/%d, cost:%f' % (epoch, iteration, n_batches, cost))
 			iteration += 1
 
-		print 'epoch:%d, mean_cost:%f' % (epoch, np.mean(costVector))
+		print('epoch:%d, mean_cost:%f' % (epoch, np.mean(costVector)))
 		use_noise.set_value(0.)
 		validAuc = calculate_auc(test_model, validSet, options)
-		print 'Validation cross entropy:%f at epoch:%d' % (validAuc, epoch)
+		print('Validation cross entropy:%f at epoch:%d' % (validAuc, epoch))
 		if validAuc < bestValidCrossEntropy: 
 			bestValidCrossEntropy = validAuc
 			bestValidEpoch = epoch
 			bestParams = unzip(tparams)
 			testCrossEntropy = calculate_auc(test_model, testSet, options)
-			print 'Test cross entropy:%f at epoch:%d' % (testCrossEntropy, epoch)
+			print('Test cross entropy:%f at epoch:%d' % (testCrossEntropy, epoch))
 			tempParams = unzip(tparams)
 			np.savez_compressed(outFile + '.' + str(epoch), **tempParams)
-	print 'The best valid cross entropy:%f at epoch:%d' % (bestValidCrossEntropy, bestValidEpoch)
-	print 'The test cross entropy: %f' % testCrossEntropy
+	print('The best valid cross entropy:%f at epoch:%d' % (bestValidCrossEntropy, bestValidEpoch))
+	print('The test cross entropy: %f' % testCrossEntropy)
 	
 def parse_arguments(parser):
 	parser.add_argument('seq_file', type=str, metavar='<visit_file>', help='The path to the Pickled file containing visit information of patients')
@@ -496,7 +496,7 @@ if __name__ == '__main__':
 	hiddenDimSize = [int(strDim) for strDim in args.hidden_dim_size[1:-1].split(',')]
 
 	if args.predict_time and args.time_file == '':
-		print 'Cannot predict time duration without time file'
+		print('Cannot predict time duration without time file')
 		sys.exit()
 
 	train_doctorAI(

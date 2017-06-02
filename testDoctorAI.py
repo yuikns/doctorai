@@ -5,7 +5,7 @@
 
 import sys
 import numpy as np
-import cPickle as pickle
+import pickle as pickle
 from collections import OrderedDict
 import argparse
 
@@ -13,7 +13,7 @@ import theano
 import theano.tensor as T
 from theano import config
 
-from Queue import heapq
+from queue import heapq
 import operator
 import time
 import warnings
@@ -47,7 +47,7 @@ def numpy_floatX(data):
 
 def init_tparams(params):
 	tparams = OrderedDict()
-	for key, value in params.iteritems():
+	for key, value in params.items():
 		tparams[key] = theano.shared(value, name=key)
 	return tparams
 
@@ -113,7 +113,7 @@ def load_data(dataFile, labelFile, timeFile):
 		test_set_t = np.array(pickle.load(open(timeFile, 'rb')))
 
 	def len_argsort(seq):
-		return sorted(range(len(seq)), key=lambda x: len(seq[x]))
+		return sorted(list(range(len(seq))), key=lambda x: len(seq[x]))
 
 	sorted_index = len_argsort(test_set_x)
 	test_set_x = [test_set_x[i] for i in sorted_index]
@@ -186,7 +186,7 @@ def test_doctorAI(
 	models = np.load(modelFile)
 	tparams = init_tparams(models)
 
-	print 'build model ... ',
+	print('build model ... ', end=' ')
 	if predictTime:
 		x, t, mask, codePred, timePred = build_model(tparams, options)
 		predict_code = theano.function(inputs=[x,t,mask], outputs=codePred, name='predict_code')
@@ -200,10 +200,10 @@ def test_doctorAI(
 
 	options['inputDimSize']=models['W_emb'].shape[0]
 	options['numClass']=models['b_output'].shape[0]
-	print 'load data ... ', 
+	print('load data ... ', end=' ') 
 	testSet = load_data(seqFile, labelFile, timeFile)
 	n_batches = int(np.ceil(float(len(testSet[0])) / float(batchSize)))
-	print 'done'
+	print('done')
 
 	predVec = []
 	trueVec = []
@@ -242,16 +242,16 @@ def test_doctorAI(
 				for timeIndex in range(lengths[i]):
 					predTimeVec.append(timeVec[timeIndex])
 
-		if (iteration % 10 == 0) and verbose: print 'iteration:%d/%d' % (iteration, n_batches)
+		if (iteration % 10 == 0) and verbose: print('iteration:%d/%d' % (iteration, n_batches))
 		iteration += 1
 		if iteration == 10: break
 			
 	recall = recallTop(trueVec, predVec)
-	print 'recall@10:%f, recall@20:%f, recall@30:%f' % (recall[0], recall[1], recall[2])
+	print('recall@10:%f, recall@20:%f, recall@30:%f' % (recall[0], recall[1], recall[2]))
 
 	if predictTime: 
 		r_squared = calculate_r_squared(trueTimeVec, predTimeVec, options)
-		print 'R2:%f' % r_squared
+		print('R2:%f' % r_squared)
 
 def parse_arguments(parser):
 	parser.add_argument('model_file', type=str, metavar='<model_file>', help='The path to the model file saved by Doctor AI')
@@ -273,7 +273,7 @@ if __name__ == '__main__':
 	hiddenDimSize = [int(strDim) for strDim in args.hidden_dim_size[1:-1].split(',')]
 
 	if args.predict_time and args.time_file == '':
-		print 'Cannot predict time duration without time file'
+		print('Cannot predict time duration without time file')
 		sys.exit()
 
 	test_doctorAI(
