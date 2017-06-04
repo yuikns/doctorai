@@ -13,7 +13,7 @@ import theano
 import theano.tensor as T
 from theano import config
 
-from queue import heapq
+import heapq
 import operator
 import time
 import warnings
